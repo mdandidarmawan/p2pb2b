@@ -5,6 +5,7 @@ import hmac
 import hashlib
 import time
 
+
 class P2PB2B:
     BASE_URL = 'https://p2pb2b.io'
     API_V1_URL = '/api/v1'
@@ -14,22 +15,22 @@ class P2PB2B:
         'ticker': '/public/ticker',
         'book': '/public/book',
         'history': '/public/history',
-        'historyResult': '/public/history/result',
+        'history_result': '/public/history/result',
         'products': '/public/products',
         'symbols': '/public/symbols',
         'depth': '/public/depth/result',
-        'newOrder': '/order/new',
-        'cancelOrder': '/order/cancel',
+        'new_order': '/order/new',
+        'cancel_order': '/order/cancel',
         'orders': '/orders',
         'balances': '/account/balances',
         'balance': '/account/balance',
         'order': '/account/order',
-        'orderHistory': '/account/order_history'
+        'order_history': '/account/order_history'
     }
 
-    def __init__(self, apiKey, apiSecret):
-        self.apiKey = apiKey
-        self.apiSecret = apiSecret.encode()
+    def __init__(self, api_key, api_secret):
+        self.api_key = api_key
+        self.api_secret = api_secret.encode()
 
     ################################################
     #
@@ -37,53 +38,53 @@ class P2PB2B:
     #
     ################################################
 
-    def getMarkets(self):
-        return self._getRequest(self.METHODS['markets'])
+    def get_markets(self):
+        return self._get_request(self.METHODS['markets'])
 
-    def getTickers(self):
-        return self._getRequest(self.METHODS['tickers'])
+    def get_tickers(self):
+        return self._get_request(self.METHODS['tickers'])
 
-    def getTicker(self, market):
+    def get_ticker(self, market):
         params = {'market': market}
-        return self._getRequest(self.METHODS['ticker'], params)
+        return self._get_request(self.METHODS['ticker'], params)
 
-    def getBook(self, market, side, offset = 0, limit = 50):
+    def get_book(self, market, side, offset=0, limit=50):
         params = {
             'market': market,
             'side': side,
             'offset': offset,
             'limit': limit
         }
-        return self._getRequest(self.METHODS['book'], params)
+        return self._get_request(self.METHODS['book'], params)
 
-    def getHistory(self, market, lastId, limit = 50):
+    def get_history(self, market, last_id, limit=50):
         params = {
             'market': market,
-            'lastId': lastId,
+            'last_id': last_id,
             'limit': limit
         }
-        return self._getRequest(self.METHODS['history'], params)
+        return self._get_request(self.METHODS['history'], params)
 
-    def getHistoryResult(self, market, since, limit = 50):
+    def get_history_result(self, market, since, limit=50):
         params = {
             'market': market,
             'since': since,
             'limit': limit
         }
-        return self._getRequest(self.METHODS['historyResult'], params)
+        return self._get_request(self.METHODS['history_result'], params)
 
-    def getProducts(self):
-        return self._getRequest(self.METHODS['products'])
+    def get_products(self):
+        return self._get_request(self.METHODS['products'])
 
-    def getSymbols(self):
-        return self._getRequest(self.METHODS['symbols'])
+    def get_symbols(self):
+        return self._get_request(self.METHODS['symbols'])
 
-    def getDepth(self, market, limit = 50):
+    def get_depth(self, market, limit=50):
         params = {
             'market': market,
             'limit': limit
         }
-        return self._getRequest(self.METHODS['depth'], params)
+        return self._get_request(self.METHODS['depth'], params)
 
     ################################################
     #
@@ -91,29 +92,29 @@ class P2PB2B:
     #
     ################################################
 
-    def newOrder(self, market, side, amount, price):
+    def new_order(self, market, side, amount, price):
         data = {
             'market': market,
             'side': side,
             'amount': amount,
             'price': price
         }
-        return self._postRequest(self.METHODS['newOrder'], data)
+        return self._post_request(self.METHODS['new_order'], data)
 
-    def cancelOrder(self, market, orderId):
+    def cancel_order(self, market, order_id):
         data = {
             'market': market,
-            'orderId': orderId
+            'order_id': order_id
         }
-        return self._postRequest(self.METHODS['cancelOrder'], data)
+        return self._post_request(self.METHODS['cancel_order'], data)
 
-    def getOrders(self, market, offset = 0, limit = 50):
+    def get_orders(self, market, offset=0, limit=50):
         data = {
             'market': market,
             'offset': offset,
             'limit': limit,
         }
-        return self._postRequest(self.METHODS['orders'], data)
+        return self._post_request(self.METHODS['orders'], data)
 
     ################################################
     #
@@ -121,27 +122,27 @@ class P2PB2B:
     #
     ################################################
 
-    def getBalances(self):
-        return self._postRequest(self.METHODS['balances'])
+    def get_balances(self):
+        return self._post_request(self.METHODS['balances'])
 
-    def getBalance(self, currency):
+    def get_balance(self, currency):
         data = {'currency': currency}
-        return self._postRequest(self.METHODS['balance'], data)
+        return self._post_request(self.METHODS['balance'], data)
 
-    def getOrder(self, orderId, offset = 0, limit = 50):
+    def get_order(self, order_id, offset=0, limit=50):
         data = {
-            'orderId': orderId,
+            'order_id': order_id,
             'offset': offset,
             'limit': limit
         }
-        return self._postRequest(self.METHODS['order'], data)
+        return self._post_request(self.METHODS['order'], data)
 
-    def getOrderHistory(self, offset = 0, limit = 50):
+    def get_order_history(self, offset=0, limit=50):
         data = {
             'offset': offset,
             'limit': limit
         }
-        return self._postRequest(self.METHODS['orderHistory'], data)
+        return self._post_request(self.METHODS['order_history'], data)
 
     ################################################
     #
@@ -149,36 +150,37 @@ class P2PB2B:
     #
     ################################################
 
-    def _getRequest(self, requestUrl, params = None):
+    def _get_request(self, request_url, params=None):
         response = requests.get(
-            url = self.BASE_URL + self.API_V1_URL + requestUrl,
-            params = params
+            url=self.BASE_URL + self.API_V1_URL + request_url,
+            params=params
         )
         return response.json()
 
-    def _postRequest(self, requestUrl, data = None):
+    def _post_request(self, request_url, data=None):
         timestamp = str(time.time()).split('.')[0]
-        baseData = {
-            'request': self.API_V1_URL + requestUrl,
+        base_data = {
+            'request': self.API_V1_URL + request_url,
             'nonce': timestamp
         }
         if data is not None:
-            data.update(baseData)
+            data.update(base_data)
         else:
-            data = baseData
-        data = json.dumps(data, separators = (',', ':'))
+            data = base_data
+        data = json.dumps(data, separators=(',', ':'))
         payload = base64.b64encode(data.encode())
-        signature = hmac.new(self.apiSecret, payload, hashlib.sha512).hexdigest()
+        signature = hmac.new(self.api_secret, payload,
+                             hashlib.sha512).hexdigest()
         payload = payload.decode()
         headers = {
             'Content-type': 'application/json',
-            'X-TXC-APIKEY': self.apiKey,
+            'X-TXC-APIKEY': self.api_key,
             'X-TXC-PAYLOAD': payload,
             'X-TXC-SIGNATURE': signature
         }
         response = requests.post(
-            url = self.BASE_URL + self.API_V1_URL + requestUrl,
-            data = data,
-            headers = headers
+            url=self.BASE_URL + self.API_V1_URL + request_url,
+            data=data,
+            headers=headers
         )
         return response.json()
